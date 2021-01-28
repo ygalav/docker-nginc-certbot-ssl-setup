@@ -5,7 +5,7 @@ services:
     container_name: "sample-app"
     image: 'openjdk:8-jdk-alpine'
     restart: always
-    volumes:ł
+    volumes:
       - "./sample-app.jar:/app.jar"
     command: [java,"-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
     networks:
@@ -21,7 +21,7 @@ services:
       - "./data/certbot/conf:/etc/letsencrypt"
       - "./data/certbot/conf:/www/certbot"
     networks:
-      - prayer
+      - app
     ports:
       - "80:80"
       - "443:443"
@@ -29,9 +29,11 @@ services:
 
   certbot:
     image: certbot/certbot
-  volumes:
-    - "./data/certbot/conf:/etc/letsencrypt"
-    - "./data/certbot/conf:/www/certbot"
+    volumes:
+      - "./data/certbot/conf:/etc/letsencrypt"
+      - "./data/certbot/conf:/www/certbot"
+    networks:
+      - app
 
 networks:
   app:
