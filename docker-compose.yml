@@ -1,0 +1,37 @@
+version: '3'
+services:
+  
+  web-app:
+    container_name: "sample-app"
+    image: 'openjdk:8-jdk-alpine'
+    restart: always
+    volumes:ł
+      - "./sample-app.jar:/app.jar"
+    command: [java,"-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+    networks:
+      - app
+
+  nginx:
+    container_name: "nginx"
+    image: "nginx:1.15-alpine"
+    restart: always
+    volumes:
+      - "./nginx.conf:/etc/nginx/conf.d/nginx.conf"
+      - "./reverse-proxy.conf:/etc/nginx/reverse-proxy.conf"
+      - "./data/certbot/conf:/etc/letsencrypt"
+      - "./data/certbot/conf:/www/certbot"
+    networks:
+      - prayer
+    ports:
+      - "80:80"
+      - "443:443"
+    command: [nginx-debug, '-g', 'daemon off;']
+
+  certbot:
+    image: certbot/certbot
+  volumes:
+    - "./data/certbot/conf:/etc/letsencrypt"
+    - "./data/certbot/conf:/www/certbot"
+
+networks:
+  app:
